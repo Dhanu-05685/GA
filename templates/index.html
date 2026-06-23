@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>GitHub Analyzer</title>
+
+<link rel="stylesheet"
+href="/static/style.css">
+
+</head>
+
+
+<body class="index-bg">
+
+
+
+<div class="top-bar">
+
+
+<h1>
+
+🐙 GitHub Analyzer
+
+</h1>
+
+
+<a href="/logout"
+class="logout-btn">
+
+Logout
+
+</a>
+
+
+</div>
+
+
+
+
+
+
+<form method="POST" class="search-box">
+
+
+<input
+
+name="username"
+
+placeholder="Enter GitHub Username"
+
+required>
+
+
+<button>
+
+Analyze
+
+</button>
+
+
+</form>
+
+
+
+
+
+
+{% if result %}
+
+
+<div class="card">
+
+
+<img class="avatar"
+src="{{result.avatar}}">
+
+
+<h2>
+
+{{result.username}}
+
+</h2>
+
+
+
+<p>
+
+{{result.bio}}
+
+</p>
+
+
+<p>
+
+📍 {{result.location}}
+
+</p>
+
+
+<p>
+
+🏢 {{result.company}}
+
+</p>
+
+
+
+
+
+<a href="{{result.github}}">
+
+<button>
+
+View GitHub
+
+</button>
+
+</a>
+
+
+
+
+
+
+<div class="circle">
+
+{{result.score}}%
+
+</div>
+
+
+
+
+
+<h3>
+
+Recruiter Score
+
+</h3>
+
+
+
+
+<p>
+
+Repositories:
+{{result.repos}}
+
+</p>
+
+
+<p>
+
+Followers:
+{{result.followers}}
+
+</p>
+
+
+
+
+<h3>
+
+Languages
+
+</h3>
+
+
+{% for lang in result.languages %}
+
+<p>
+
+💻 {{lang}}
+
+</p>
+
+
+{% endfor %}
+
+
+
+
+
+<h3>
+
+Suggestions 🤖
+
+</h3>
+
+
+{% for s in result.suggestions %}
+
+<p>
+
+✓ {{s}}
+
+</p>
+
+{% endfor %}
+
+
+
+
+
+<a href="/download?user={{result.username}}">
+
+<button>
+
+Download PDF
+
+</button>
+
+</a>
+
+
+
+
+</div>
+
+
+
+{% endif %}
+
+
+
+
+
+
+<h2 class="leader">
+
+🏆 Leaderboard
+
+</h2>
+
+
+
+<div class="card">
+
+
+{% for user in leaderboard %}
+
+
+<p>
+
+{{loop.index}}.
+
+{{user[0]}}
+
+-
+
+{{user[1]}}%
+
+</p>
+
+
+{% endfor %}
+
+
+</div>
+
+
+
+
+
+</body>
+
+</html>

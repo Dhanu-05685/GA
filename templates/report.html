@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>GitHub Analyzer Report</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f4f4;
+padding:30px;
+}
+
+
+.card{
+
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 30px #aaa;
+
+text-align:center;
+
+}
+
+
+.avatar{
+
+width:150px;
+height:150px;
+border-radius:50%;
+
+}
+
+
+.score{
+
+width:130px;
+height:130px;
+
+border-radius:50%;
+
+background:linear-gradient(
+135deg,
+#00c853,
+#64dd17
+);
+
+color:white;
+
+font-size:40px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+margin:auto;
+
+}
+
+
+h1{
+
+color:#764ba2;
+
+}
+
+
+li{
+
+text-align:left;
+margin:10px;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="card">
+
+
+<h1>GitHub Analyzer Report</h1>
+
+
+
+<img class="avatar"
+src="{{result.avatar}}">
+
+
+
+<h2>
+{{result.username}}
+</h2>
+
+
+<p>
+{{result.bio}}
+</p>
+
+
+
+<p>
+📍 {{result.location}}
+</p>
+
+
+<p>
+🏢 {{result.company}}
+</p>
+
+
+
+<a href="{{result.github}}">
+{{result.github}}
+</a>
+
+
+
+<br><br>
+
+
+
+<div class="score">
+
+{{result.score}}%
+
+</div>
+
+
+
+<h3>
+
+{% if result.score < 40 %}
+
+Beginner Profile
+
+{% elif result.score < 75 %}
+
+Good Developer Profile
+
+{% else %}
+
+Recruiter Ready 🚀
+
+{% endif %}
+
+
+</h3>
+
+
+
+
+<hr>
+
+
+
+<h3>Statistics</h3>
+
+
+<p>
+Repositories:
+{{result.repos}}
+</p>
+
+
+<p>
+Followers:
+{{result.followers}}
+</p>
+
+
+<p>
+Stars:
+{{result.stars}}
+</p>
+
+
+
+
+<h3>Languages</h3>
+
+
+{% for lang in result.languages %}
+
+<p>
+{{lang}}
+</p>
+
+{% endfor %}
+
+
+
+
+<h3>AI Suggestions</h3>
+
+
+<ul>
+
+{% for s in result.suggestions %}
+
+<li>
+{{s}}
+</li>
+
+
+{% endfor %}
+
+
+</ul>
+
+
+
+
+</div>
+
+
+
+</body>
+
+
+</html>
