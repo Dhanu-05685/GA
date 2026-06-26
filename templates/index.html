@@ -1,33 +1,35 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
 
 <title>GitHub Analyzer</title>
 
-<link rel="stylesheet"
-href="/static/style.css">
+<link rel="stylesheet" href="/static/style.css">
 
 </head>
 
 
-<body class="index-bg">
-
+<body>
 
 
 <div class="top-bar">
 
 
-<h1>
+<div class="logo-area">
 
-🐙 GitHub Analyzer
+<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png">
 
-</h1>
+<h1>GitHub Analyzer</h1>
+
+<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png">
 
 
-<a href="/logout"
-class="logout-btn">
+</div>
+
+
+
+<a href="/logout" class="logout-btn">
 
 Logout
 
@@ -40,24 +42,42 @@ Logout
 
 
 
+<p class="subtitle">
+
+Analyze GitHub profiles and get AI-powered insights
+
+</p>
+
+
+
+
 
 <form method="POST" class="search-box">
+
+
+<h2>Analyze GitHub Username</h2>
+
+
+<div class="input-row">
 
 
 <input
 
 name="username"
 
-placeholder="Enter GitHub Username"
+placeholder="Enter GitHub username..."
 
 required>
 
 
 <button>
 
-Analyze
+🔍 Analyze
 
 </button>
+
+
+</div>
 
 
 </form>
@@ -67,59 +87,40 @@ Analyze
 
 
 
+
+
+
 {% if result %}
 
 
-<div class="card">
+<div class="profile card">
 
 
-<img class="avatar"
-src="{{result.avatar}}">
+<img class="avatar" src="{{result.avatar}}">
 
 
-<h2>
-
-{{result.username}}
-
-</h2>
+<h2>{{result.username}}</h2>
 
 
-
-<p>
-
-{{result.bio}}
-
-</p>
+<p>{{result.bio}}</p>
 
 
-<p>
-
-📍 {{result.location}}
-
-</p>
+<p>📍 {{result.location}}</p>
 
 
-<p>
-
-🏢 {{result.company}}
-
-</p>
-
-
+<p>🏢 {{result.company}}</p>
 
 
 
 <a href="{{result.github}}">
 
-<button>
+<button class="small-btn">
 
 View GitHub
 
 </button>
 
 </a>
-
-
 
 
 
@@ -131,49 +132,28 @@ View GitHub
 </div>
 
 
-
-
-
-<h3>
-
-Recruiter Score
-
-</h3>
-
+<h3>Recruiter Score</h3>
 
 
 
 <p>
-
-Repositories:
-{{result.repos}}
-
+Repositories : {{result.repos}}
 </p>
 
 
 <p>
-
-Followers:
-{{result.followers}}
-
+Followers : {{result.followers}}
 </p>
 
 
 
-
-<h3>
-
-Languages
-
-</h3>
+<h3>Languages</h3>
 
 
 {% for lang in result.languages %}
 
 <p>
-
 💻 {{lang}}
-
 </p>
 
 
@@ -181,16 +161,11 @@ Languages
 
 
 
-
-
-<h3>
-
-Suggestions 🤖
-
-</h3>
+<h3>Suggestions 🤖</h3>
 
 
 {% for s in result.suggestions %}
+
 
 <p>
 
@@ -198,13 +173,13 @@ Suggestions 🤖
 
 </p>
 
+
 {% endfor %}
 
 
 
 
-
-<a href="/download?user={{result.username}}">
+<a href="/download">
 
 <button>
 
@@ -213,7 +188,6 @@ Download PDF
 </button>
 
 </a>
-
 
 
 
@@ -228,6 +202,9 @@ Download PDF
 
 
 
+
+
+
 <h2 class="leader">
 
 🏆 Leaderboard
@@ -236,29 +213,54 @@ Download PDF
 
 
 
-<div class="card">
+
+
+<div class="leader-card">
+
 
 
 {% for user in leaderboard %}
 
 
-<p>
 
-{{loop.index}}.
+<div class="rank">
+
+
+<div>
+
+
+<span class="number">
+
+{{loop.index}}
+
+</span>
+
 
 {{user[0]}}
 
--
+
+</div>
+
+
+
+<b>
 
 {{user[1]}}%
 
-</p>
+</b>
+
+
+</div>
+
+
 
 
 {% endfor %}
 
 
+
 </div>
+
 
 
 

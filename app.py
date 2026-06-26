@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect,send_file,session
+from flask import Flask, render_template, request, redirect, send_file, session
 from flask_bcrypt import Bcrypt
 from flask_login import (
     LoginManager,
@@ -7,22 +7,29 @@ from flask_login import (
     login_required,
     UserMixin
 )
+
 import sqlite3
 import requests
-from reportlab.pdfgen import canvas
 import os
-from datetime import datetime
+
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.utils import ImageReader
 
 
-app=Flask(__name__)
+
+app = Flask(__name__)
 
 app.secret_key="secret123"
+
 
 bcrypt=Bcrypt(app)
 
 
 login_manager=LoginManager(app)
 login_manager.login_view="login"
+
+
 
 
 
@@ -68,11 +75,16 @@ init_db()
 
 
 
+
+
 class User(UserMixin):
 
     def __init__(self,id,username):
+
         self.id=id
         self.username=username
+
+
 
 
 
@@ -83,18 +95,28 @@ def load_user(id):
     con=db()
     c=con.cursor()
 
+
     c.execute(
         "SELECT * FROM users WHERE id=?",
         (id,)
     )
 
-    data=c.fetchone()
+
+    user=c.fetchone()
 
     con.close()
 
 
-    if data:
-        return User(data[0],data[1])
+    if user:
+
+        return User(
+            user[0],
+            user[1]
+        )
+
+
+
+
 
 
 
@@ -105,24 +127,32 @@ def load_user(id):
 @app.route("/register",methods=["GET","POST"])
 def register():
 
+
     if request.method=="POST":
 
 
         username=request.form["username"]
+
 
         password=bcrypt.generate_password_hash(
             request.form["password"]
         ).decode()
 
 
+
         con=db()
+
         c=con.cursor()
+
 
 
         try:
 
             c.execute(
-            "INSERT INTO users(username,password) VALUES(?,?)",
+            """
+            INSERT INTO users(username,password)
+            VALUES(?,?)
+            """,
             (username,password)
             )
 
@@ -130,7 +160,9 @@ def register():
 
 
         except:
+
             pass
+
 
 
         con.close()
@@ -148,21 +180,30 @@ def register():
 
 
 
+
+
+
+
 # LOGIN
+
 
 @app.route("/login",methods=["GET","POST"])
 def login():
+
 
     if request.method=="POST":
 
 
         username=request.form["username"]
+
         password=request.form["password"]
 
 
 
         con=db()
+
         c=con.cursor()
+
 
 
         c.execute(
@@ -173,21 +214,25 @@ def login():
 
         user=c.fetchone()
 
+
         con.close()
 
 
 
+
         if user:
+
 
             if bcrypt.check_password_hash(
                 user[2],
                 password
             ):
 
+
                 login_user(
                     User(
-                    user[0],
-                    user[1]
+                        user[0],
+                        user[1]
                     )
                 )
 
@@ -197,6 +242,10 @@ def login():
 
 
     return render_template("login.html")
+
+
+
+
 
 
 
@@ -213,29 +262,39 @@ def logout():
 
 
 
-# ANALYSIS
+
+
+
+
+
+
+# GITHUB ANALYSIS
+
 
 def analyze(username):
 
 
     user=requests.get(
-    f"https://api.github.com/users/{username}"
+        f"https://api.github.com/users/{username}"
     ).json()
+
 
 
     repos=requests.get(
-    f"https://api.github.com/users/{username}/repos"
+        f"https://api.github.com/users/{username}/repos"
     ).json()
+
+
 
 
 
     score=(
 
-    user.get("public_repos",0)*8
+        user.get("public_repos",0)*8
 
-    +
+        +
 
-    user.get("followers",0)*2
+        user.get("followers",0)*2
 
     )
 
@@ -244,33 +303,48 @@ def analyze(username):
 
 
 
+
+
     languages=[]
 
 
-    for r in repos:
 
-        if r.get("language"):
+    for repo in repos:
+
+
+        if repo.get("language"):
 
             languages.append(
-            r.get("language")
+                repo.get("language")
             )
+
 
 
     languages=list(set(languages))
 
 
 
-    result={
+
+
+    return {
+
 
     "username":username,
 
+
     "avatar":user.get("avatar_url"),
 
-    "bio":user.get("bio") or "No bio available",
 
-    "location":user.get("location") or "Not mentioned",
+    "bio":
+    user.get("bio") or "No bio available",
 
-    "company":user.get("company") or "Not mentioned",
+
+    "location":
+    user.get("location") or "Not mentioned",
+
+
+    "company":
+    user.get("company") or "Not mentioned",
 
 
     "github":
@@ -294,21 +368,25 @@ def analyze(username):
     "languages":languages,
 
 
+
     "suggestions":[
 
-    "Add README files",
+        "Add README files",
 
-    "Improve project documentation",
+        "Improve project documentation",
 
-    "Create more projects"
+        "Create more projects"
 
     ]
+
 
     }
 
 
 
-    return result
+
+
+
 
 
 
@@ -316,11 +394,14 @@ def analyze(username):
 
 # HOME
 
+
 @app.route("/",methods=["GET","POST"])
 @login_required
 def index():
 
+
     result=None
+
 
 
     if request.method=="POST":
@@ -337,12 +418,12 @@ def index():
 
 
 
+
         con=db()
+
         c=con.cursor()
 
 
-
-        # update instead insert duplicate
 
         c.execute(
         """
@@ -359,13 +440,19 @@ def index():
         )
 
 
+
         con.commit()
+
         con.close()
 
 
 
+
+
     con=db()
+
     c=con.cursor()
+
 
 
     c.execute(
@@ -380,14 +467,17 @@ def index():
 
     leaderboard=c.fetchall()
 
+
     con.close()
 
 
 
+
+
     return render_template(
-    "index.html",
-    result=result,
-    leaderboard=leaderboard
+        "index.html",
+        result=result,
+        leaderboard=leaderboard
     )
 
 
@@ -396,7 +486,14 @@ def index():
 
 
 
-# PDF
+
+
+
+
+
+
+# PDF DOWNLOAD
+
 
 @app.route("/download")
 @login_required
@@ -406,29 +503,171 @@ def download():
     data=session.get("report")
 
 
+
     if not data:
-        return "No report"
+
+        return "Analyze profile first"
+
+
 
 
     path="github_report.pdf"
 
 
 
-    pdf=canvas.Canvas(path)
+    pdf=canvas.Canvas(
+        path,
+        pagesize=letter
+    )
 
 
-    y=800
+    width,height=letter
 
 
-    for k,v in data.items():
 
-        pdf.drawString(
-        50,
+    y=750
+
+
+
+
+
+    pdf.setFont(
+        "Helvetica-Bold",
+        22
+    )
+
+
+    pdf.drawString(
+        170,
         y,
-        f"{k}: {v}"
+        "GitHub Analyzer Report"
+    )
+
+
+    y-=40
+
+
+
+
+
+
+    try:
+
+
+        img=ImageReader(
+            data["avatar"]
         )
 
-        y-=30
+
+        pdf.drawImage(
+            img,
+            220,
+            y-120,
+            width=120,
+            height=120
+        )
+
+
+        y-=150
+
+
+    except:
+
+        pass
+
+
+
+
+
+    pdf.setFont(
+        "Helvetica",
+        13
+    )
+
+
+
+
+
+    details=[
+
+
+    "Username : "+data["username"],
+
+    "Bio : "+data["bio"],
+
+    "Location : "+data["location"],
+
+    "Company : "+data["company"],
+
+    "GitHub : "+data["github"],
+
+
+    "",
+
+
+    "Recruiter Score : "+str(data["score"])+"%",
+
+
+    "",
+
+
+    "Repositories : "+str(data["repos"]),
+
+
+    "Followers : "+str(data["followers"]),
+
+
+    "Stars : "+str(data["stars"]),
+
+
+    "",
+
+
+    "Languages : "+", ".join(data["languages"]),
+
+
+    "",
+
+
+    "AI Suggestions"
+
+
+    ]
+
+
+
+
+
+
+    for line in details:
+
+
+        pdf.drawString(
+            70,
+            y,
+            line
+        )
+
+
+        y-=25
+
+
+
+
+
+    for s in data["suggestions"]:
+
+
+        pdf.drawString(
+            90,
+            y,
+            "✓ "+s
+        )
+
+
+        y-=25
+
+
 
 
 
@@ -436,15 +675,21 @@ def download():
 
 
 
+
     return send_file(
-    path,
-    as_attachment=True
+        path,
+        as_attachment=True
     )
 
 
 
 
 
+
+
+
+
 if __name__=="__main__":
+
 
     app.run(debug=True)
