@@ -1,0 +1,18 @@
+# Virtual environment
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Database
+database.db
+
+# Reports
+github_report.pdf
+
+# Secrets
+firebase_key.json
+
+# Environment
+.env
