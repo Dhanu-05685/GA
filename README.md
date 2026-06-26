@@ -113,8 +113,12 @@ Open browser:
 
 ```
 http://127.0.0.1:5000
-```
 
+```
+port url:
+```
+https://4zdgd1w3-5000.inc1.devtunnels.ms/
+```
 ---
 
 ## 🔑 Login System
